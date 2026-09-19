@@ -1,0 +1,156 @@
+/**
+ * PG SAHARA - Design Tokens & Core Stylesheet
+ * Brand Blue: #2563eb
+ * Spending: #ef4444 (Red)
+ * Saving: #10b981 (Green)
+ * Room Rent: #8b5cf6
+ * Investment: #06b6d4
+ * Recharge: #f59e0b
+ * Donate/Loss: #ec4899
+ * Money Given: #6366f1
+ * Money Taken: #0284c7
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Brand Colors */
+  --brand-primary: #2563eb;
+  --brand-primary-hover: #1d4ed8;
+  --brand-light: rgba(37, 99, 235, 0.12);
+  --brand-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+
+  /* Financial Semantics */
+  --color-spending: #ef4444;
+  --color-spending-bg: rgba(239, 68, 68, 0.12);
+  --color-saving: #10b981;
+  --color-saving-bg: rgba(16, 185, 129, 0.12);
+
+  /* Categories */
+  --color-rent: #8b5cf6;
+  --color-rent-bg: rgba(139, 92, 246, 0.12);
+  --color-investment: #06b6d4;
+  --color-investment-bg: rgba(6, 182, 212, 0.12);
+  --color-recharge: #f59e0b;
+  --color-recharge-bg: rgba(245, 158, 11, 0.12);
+  --color-donate: #ec4899;
+  --color-donate-bg: rgba(236, 72, 153, 0.12);
+  --color-given: #6366f1;
+  --color-given-bg: rgba(99, 102, 241, 0.12);
+  --color-taken: #0ea5e9;
+  --color-taken-bg: rgba(14, 165, 233, 0.12);
+
+  /* Border Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-full: 9999px;
+
+  /* Transition Speeds */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Theme (Default) */
+[data-theme="dark"] {
+  --bg-app: #0b0f19;
+  --bg-sidebar: #0f172a;
+  --bg-surface: #131d33;
+  --bg-surface-elevated: #1a2542;
+  --bg-surface-hover: #223154;
+  --bg-glass: rgba(19, 29, 51, 0.85);
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 24px rgba(37, 99, 235, 0.35);
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  --bg-app: #f1f5f9;
+  --bg-sidebar: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f8fafc;
+  --bg-surface-hover: #f1f5f9;
+  --bg-glass: rgba(255, 255, 255, 0.9);
+
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.14);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.2);
+}
+
+/* Global Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-app);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Utilities */
+.text-danger { color: var(--color-spending) !important; }
+.text-success { color: var(--color-saving) !important; }
+.text-primary { color: var(--brand-primary) !important; }
+.text-muted { color: var(--text-muted) !important; }
+.text-rent { color: var(--color-rent) !important; }
+.text-investment { color: var(--color-investment) !important; }
+.text-recharge { color: var(--color-recharge) !important; }
+
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PG SAHARA - My PG & College Money Manager</title>
+  <meta name="description" content="A comprehensive, smart personal finance and money management web app tailored for college students living in PGs. Track rent, daily expenses, recharge, investments, and debt reminders.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Desktop Sidebar -->
+    <aside class="sidebar">
+      <div class="brand-section">
+        <div class="brand-logo-icon">PS</div>
+        <div class="brand-text">
+          <h1>PG SAHARA</h1>
+          <span>College Money Manager</span>
+        </div>
+      </div>
+
+      <ul class="nav-list">
+        <li class="nav-item active" data-view="dashboard">
+          <button id="nav-btn-dashboard">
+            <span class="nav-icon">🏠</span>
+            <span>Dashboard</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="calendar">
+          <button id="nav-btn-calendar">
+            <span class="nav-icon">📅</span>
+            <span>Calendar</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="summary">
+          <button id="nav-btn-summary">
+            <span class="nav-icon">📑</span>
+            <span>Monthly Summary</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="analytics">
+          <button id="nav-btn-analytics">
+            <span class="nav-icon">📊</span>
+            <span>Statistics & Graphs</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="history">
+          <button id="nav-btn-history">
+            <span class="nav-icon">📜</span>
+            <span>Expense History</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="reminders">
+          <button id="nav-btn-reminders">
+            <span class="nav-icon">🔔</span>
+            <span>Reminders</span>
+            <span class="nav-badge" id="sidebar-reminders-badge" style="display:none;">0</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="settings">
+          <button id="nav-btn-settings">
+            <span class="nav-icon">⚙️</span>
+            <span>Categories & Data</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-widget" id="sidebar-user-profile" title="Manage Account / Login">
+          <div class="user-avatar" id="sidebar-user-avatar">R</div>
+          <div class="user-info-text">
+            <span class="user-name" id="sidebar-user-name">Rajbir</span>
+            <span class="user-subtext" id="sidebar-user-pg">PG Sahara #204</span>
+          </div>
+        </div>
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+          🌙
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <main class="main-wrapper">
+      <!-- Top Navigation Bar -->
+      <header class="top-bar">
+        <div class="month-navigator">
+          <button class="month-btn" id="prev-month-btn" title="Previous Month" aria-label="Previous Month">◀</button>
+          <div class="current-month-display" id="current-month-display">September 2026</div>
+          <button class="month-btn" id="next-month-btn" title="Next Month" aria-label="Next Month">▶</button>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-outline btn-sm text-danger" id="top-btn-reset-data" title="Reset All Financial Data to Zero">
+            🔄 Reset Data
+          </button>
+          <button class="btn btn-outline btn-sm" id="btn-edit-allowance">
+            💰 Allowance
+          </button>
+          <button class="btn btn-primary btn-sm" id="top-btn-add">
+            ➕ Add Entry
+          </button>
+          <div class="user-profile-widget" id="top-user-profile" title="Account / Login" style="padding: 4px 10px;">
+            <div class="user-avatar" id="top-user-avatar" style="width: 26px; height: 26px; font-size: 0.75rem;">R</div>
+            <span class="user-name" id="top-user-name" style="font-size: 0.8rem;">Rajbir</span>
+          </div>
+          <button class="theme-toggle-btn" id="mobile-theme-toggle-btn" style="display:none;" title="Toggle Theme" aria-label="Toggle Theme">
+            🌙
+          </button>
+        </div>
+      </header>
+
+      <!-- View Container -->
+      <div class="page-container">
+
+        <!-- 1. DASHBOARD VIEW -->
+        <section class="page-view active" id="view-dashboard">
+          <!-- The 3 Primary Big Metric Cards -->
+          <div class="primary-metrics-grid">
+            <!-- Money Received -->
+            <div class="metric-card card-income">
+              <div class="metric-header">
+                <span class="metric-title">💰 Money Received</span>
+                <div class="metric-icon-bubble">₹</div>
+              </div>
+              <div class="metric-value" id="card-val-received">₹10,000</div>
+              <div class="metric-subtext">
+                <span>From Parents</span>
+                <button class="btn btn-sm btn-outline" id="btn-quick-edit-income" style="padding: 2px 8px; font-size: 0.75rem;">Edit</button>
+              </div>
+            </div>
+
+            <!-- Spent -->
+            <div class="metric-card card-spent">
+              <div class="metric-header">
+                <span class="metric-title">🔴 Spent</span>
+                <div class="metric-icon-bubble">📉</div>
+              </div>
+              <div class="metric-value text-danger" id="card-val-spent">₹6,258</div>
+              <div class="metric-subtext">
+                <span>Rent + Daily + Recharge + Loss</span>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <button class="btn btn-sm btn-outline text-danger" id="btn-quick-reset-spent" style="padding: 2px 8px; font-size: 0.72rem;" title="Zero out this month's expenses">Reset</button>
+                  <span class="pill-badge pill-danger" id="card-spent-ratio">63%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Saved -->
+            <div class="metric-card card-saved">
+              <div class="metric-header">
+                <span class="metric-title">🟢 Saved</span>
+                <div class="metric-icon-bubble">🌱</div>
+              </div>
+              <div class="metric-value text-success" id="card-val-saved">₹3,742</div>
+              <div class="metric-subtext">
+                <span>Remaining in Pocket</span>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <button class="btn btn-sm btn-outline text-danger" id="btn-quick-reset-savings" style="padding: 2px 8px; font-size: 0.72rem;" title="Reset Savings for this Month to ₹0">Reset</button>
+                  <span class="pill-badge pill-success" id="card-saved-percentage">37% Saved</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Secondary Metric Cards (Rent, Investment, Given, Receive, Taken, Pay) -->
+          <div class="secondary-metrics-grid">
+            <div class="mini-card card-rent">
+              <div class="mini-card-title">🏠 Room Rent</div>
+              <div class="mini-card-val text-rent" id="card-val-rent">₹4,000</div>
+            </div>
+            <div class="mini-card card-investment">
+              <div class="mini-card-title">📈 Investment</div>
+              <div class="mini-card-val text-investment" id="card-val-investment">₹1,000</div>
+            </div>
+            <div class="mini-card card-given">
+              <div class="mini-card-title">🤝 Money Given</div>
+              <div class="mini-card-val" id="card-val-given">₹500</div>
+            </div>
+            <div class="mini-card card-receive">
+              <div class="mini-card-title">📥 To Receive</div>
+              <div class="mini-card-val text-success" id="card-val-to-receive">₹500</div>
+            </div>
+            <div class="mini-card card-taken">
+              <div class="mini-card-title">💵 Money Taken</div>
+              <div class="mini-card-val" id="card-val-taken">₹300</div>
+            </div>
+            <div class="mini-card card-pay">
+              <div class="mini-card-title">📤 To Pay</div>
+              <div class="mini-card-val text-danger" id="card-val-to-pay">₹300</div>
+            </div>
+          </div>
+
+          <!-- Active Reminders Alerts Banner -->
+          <div class="reminder-alerts-section" id="dashboard-reminder-alerts">
+            <!-- Dynamically populated if there are active reminders -->
+          </div>
+
+          <!-- Dashboard Columns: Calendar & Inspector vs Category Overview -->
+          <div class="dashboard-columns">
+            <div class="dash-col-left">
+              <div id="dashboard-calendar-mount"></div>
+            </div>
+            <div class="dash-col-right">
+              <div id="calendar-day-inspector"></div>
+
+              <!-- Quick Category Spending Widget -->
+              <div class="chart-card" style="margin-top: 20px;">
+                <div class="chart-header">
+                  <h4 class="chart-title">Spending by Category</h4>
+                  <button class="btn btn-sm btn-outline" id="btn-goto-analytics">Full Stats →</button>
+                </div>
+                <div class="chart-canvas-box" style="height: 220px;">
+                  <canvas id="chart-category-donut"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. CALENDAR DEDICATED VIEW -->
+        <section class="page-view" id="view-calendar">
+          <div class="dashboard-columns">
+            <div class="dash-col-left">
+              <div id="full-calendar-mount"></div>
+            </div>
+            <div class="dash-col-right">
+              <div id="full-calendar-day-inspector"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. MONTHLY SUMMARY VIEW -->
+        <section class="page-view" id="view-summary">
+          <div class="chart-card" style="margin-bottom: 24px;">
+            <div class="chart-header">
+              <h3 class="chart-title" id="summary-month-title">Monthly Financial Breakdown</h3>
+              <button class="btn btn-sm btn-outline" onclick="window.print()">🖨️ Print / Save PDF</button>
+            </div>
+            <div class="tx-table-card" style="border: none;">
+              <table class="tx-table" id="monthly-summary-table">
+                <thead>
+                  <tr>
+                    <th>Financial Component</th>
+                    <th>Category / Description</th>
+                    <th>Status / Details</th>
+                    <th style="text-align: right;">Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="monthly-summary-tbody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. STATISTICS & GRAPHS VIEW -->
+        <section class="page-view" id="view-analytics">
+          <div class="charts-grid">
+            <!-- Spend vs Save -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h4 class="chart-title">🔴 Spent vs 🟢 Saved (This Month)</h4>
+              </div>
+              <div class="chart-canvas-box">
+                <canvas id="chart-spend-vs-save"></canvas>
+              </div>
+            </div>
+
+            <!-- Category Ranking Bar Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h4 class="chart-title">Category Spending Comparison</h4>
+              </div>
+              <div class="chart-canvas-box">
+                <canvas id="chart-category-bar"></canvas>
+              </div>
+            </div>
+
+            <!-- Yearly 12-Month Trends -->
+            <div class="chart-card full-width">
+              <div class="chart-header">
+                <h4 class="chart-title" id="yearly-graph-title">Yearly Spending & Saving Trend (2026)</h4>
+                <div class="form-group" style="margin: 0; width: 120px;">
+                  <select class="form-control" id="select-stats-year">
+                    <option value="2026" selected>2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2027">2027</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Yearly Stats Box Summary -->
+              <div class="yearly-stats-grid">
+                <div class="stat-box">
+                  <div class="stat-box-title">Total Yearly Spending</div>
+                  <div class="stat-box-val text-danger" id="yearly-stat-spend">₹0</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-title">Total Yearly Saving</div>
+                  <div class="stat-box-val text-success" id="yearly-stat-save">₹0</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-title">Total Yearly Investment</div>
+                  <div class="stat-box-val text-investment" id="yearly-stat-invest">₹0</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-title">Total Yearly Room Rent</div>
+                  <div class="stat-box-val text-rent" id="yearly-stat-rent">₹0</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-title">Highest Spending Month</div>
+                  <div class="stat-box-val" id="yearly-stat-high-spend" style="font-size: 1.05rem;">-</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-title">Highest Saving Month</div>
+                  <div class="stat-box-val" id="yearly-stat-high-save" style="font-size: 1.05rem;">-</div>
+                </div>
+              </div>
+
+              <div class="chart-canvas-box large">
+                <canvas id="chart-yearly-trend"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. EXPENSE HISTORY VIEW -->
+        <section class="page-view" id="view-history">
+          <!-- Filters Bar -->
+          <div class="filters-bar">
+            <div class="search-input-box">
+              <input type="text" class="form-control" id="filter-search-query" placeholder="🔍 Search by note, merchant, or person...">
+            </div>
+            <div style="width: 160px;">
+              <select class="form-control" id="filter-tx-type">
+                <option value="ALL">All Types</option>
+                <option value="EXPENSE">Daily Expense</option>
+                <option value="RENT">Room Rent</option>
+                <option value="RECHARGE">Recharge</option>
+                <option value="INVESTMENT">Investment</option>
+                <option value="DONATE">Donate / Loss</option>
+                <option value="GIVEN">Money Given</option>
+                <option value="TAKEN">Money Taken</option>
+              </select>
+            </div>
+            <div style="width: 160px;">
+              <select class="form-control" id="filter-scope-month">
+                <option value="CURRENT_MONTH" selected>Selected Month</option>
+                <option value="ALL_TIME">All Time</option>
+              </select>
+            </div>
+            <button class="btn btn-outline btn-sm" id="btn-clear-filters">Reset Filters</button>
+          </div>
+
+          <!-- Transaction Table -->
+          <div class="tx-table-card">
+            <table class="tx-table" id="history-tx-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Category / Subcategory</th>
+                  <th>Description & Notes</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="history-tx-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 6. REMINDERS VIEW -->
+        <section class="page-view" id="view-reminders">
+          <div class="chart-header" style="margin-bottom: 20px;">
+            <div>
+              <h3 class="chart-title">🤝 Money Given & 💵 Taken Reminders</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                Track pending loans and borrowings with automated weekly and 2-day reminder frequencies.
+              </p>
+            </div>
+          </div>
+
+          <div id="full-reminders-list">
+            <!-- Populated by JS -->
+          </div>
+        </section>
+
+        <!-- 7. SETTINGS & CATEGORIES VIEW -->
+        <section class="page-view" id="view-settings">
+          <div class="charts-grid">
+            <!-- Monthly Allowance Setting Card -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h4 class="chart-title">💰 Monthly Money from Parents</h4>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+                Set your fixed monthly allowance. It will automatically apply to future months unless adjusted for a specific month.
+              </p>
+              <form id="form-settings-allowance">
+                <div class="form-group">
+                  <label class="form-label">Default Monthly Amount (₹)</label>
+                  <input type="number" class="form-control" id="input-default-allowance" min="1" step="1" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Current Month Allowance (<span id="settings-current-month-label">Sept 2026</span>)</label>
+                  <input type="number" class="form-control" id="input-current-month-allowance" min="1" step="1" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Allowance</button>
+              </form>
+            </div>
+
+            <!-- Categories Management Card -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h4 class="chart-title">🏷️ Categories & Options Manager</h4>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+                Add custom platforms (e.g., Meesho, Zerodha) or new categories without touching source code.
+              </p>
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="form-row">
+                  <select class="form-control" id="manage-category-type-select">
+                    <option value="EXPENSE">Daily Expense Categories</option>
+                    <option value="RECHARGE">Recharge Options</option>
+                    <option value="INVESTMENT">Investment Platforms</option>
+                    <option value="DONATE">Donate / Loss Types</option>
+                  </select>
+                  <button class="btn btn-outline" id="btn-add-custom-category">➕ Add Category</button>
+                </div>
+                <div id="category-tree-display" style="max-height: 240px; overflow-y: auto; background: var(--bg-surface-elevated); padding: 14px; border-radius: var(--radius-md);">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Data Export, Import & Reset Card -->
+            <div class="chart-card full-width">
+              <div class="chart-header">
+                <h4 class="chart-title">💾 Backup, Restore & Reset Data</h4>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+                Reset all prices, expenses, and savings to start with a completely fresh slate, or backup your data.
+              </p>
+              <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+                <button class="btn btn-primary" id="btn-export-json">📥 Export All Data (JSON)</button>
+                <label class="btn btn-outline" style="cursor: pointer;">
+                  📤 Import Backup JSON
+                  <input type="file" id="input-import-json" accept=".json" style="display: none;">
+                </label>
+              </div>
+              <div style="display: flex; gap: 12px; flex-wrap: wrap; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
+                <button class="btn btn-outline text-danger font-semibold" id="btn-clear-all-zero">
+                  🧹 Reset All Prices & Savings to ₹0 (Clean Slate)
+                </button>
+                <button class="btn btn-outline" id="btn-clear-month-zero">
+                  🗓️ Zero Out Current Month Only (<span id="settings-reset-month-name">Sept 2026</span>)
+                </button>
+                <button class="btn btn-outline text-muted" id="btn-reset-demo-data">
+                  ⚠️ Restore Initial Demo Data
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav">
+    <button class="bottom-nav-item active" data-view="dashboard">
+      <span class="bottom-nav-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="bottom-nav-item" data-view="calendar">
+      <span class="bottom-nav-icon">📅</span>
+      <span>Calendar</span>
+    </button>
+    <button class="bottom-nav-item" id="mobile-add-btn">
+      <div class="bottom-nav-add-btn">+</div>
+      <span style="margin-top: 2px;">Add</span>
+    </button>
+    <button class="bottom-nav-item" data-view="analytics">
+      <span class="bottom-nav-icon">📊</span>
+      <span>Stats</span>
+    </button>
+    <button class="bottom-nav-item" data-view="history">
+      <span class="bottom-nav-icon">📜</span>
+      <span>History</span>
+    </button>
+  </nav>
+
+  <!-- Large Floating Action Button (+ FAB for desktop) -->
+  <button class="fab-add-btn" id="fab-add-btn" title="Add Transaction" aria-label="Add Transaction">+</button>
+
+  <!-- ADD / EDIT TRANSACTION MODAL -->
+  <div class="modal-overlay" id="modal-transaction">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-tx-title">Add Transaction</h3>
+        <button class="modal-close-btn" id="btn-close-tx-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- What do you want to add? Type Selector Pills -->
+        <label class="form-label" style="margin-bottom: 8px;">What do you want to add?</label>
+        <div class="type-selector-grid" id="type-selector-grid">
+          <div class="type-pill active" data-type="EXPENSE">
+            <span class="type-icon">🔴</span>
+            <span class="type-label">Expense</span>
+          </div>
+          <div class="type-pill" data-type="RENT">
+            <span class="type-icon">🏠</span>
+            <span class="type-label">Room Rent</span>
+          </div>
+          <div class="type-pill" data-type="RECHARGE">
+            <span class="type-icon">📱</span>
+            <span class="type-label">Recharge</span>
+          </div>
+          <div class="type-pill" data-type="INVESTMENT">
+            <span class="type-icon">📈</span>
+            <span class="type-label">Investment</span>
+          </div>
+          <div class="type-pill" data-type="INCOME">
+            <span class="type-icon">💰</span>
+            <span class="type-label">Money Received</span>
+          </div>
+          <div class="type-pill" data-type="GIVEN">
+            <span class="type-icon">🤝</span>
+            <span class="type-label">Money Given</span>
+          </div>
+          <div class="type-pill" data-type="TAKEN">
+            <span class="type-icon">💵</span>
+            <span class="type-label">Money Taken</span>
+          </div>
+          <div class="type-pill" data-type="DONATE">
+            <span class="type-icon">💸</span>
+            <span class="type-label">Donate/Loss</span>
+          </div>
+        </div>
+
+        <!-- Dynamic Form -->
+        <form id="form-transaction">
+          <input type="hidden" id="form-tx-id">
+          <input type="hidden" id="form-tx-type" value="EXPENSE">
+
+          <!-- Amount and Date -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="form-tx-amount">Amount (₹) *</label>
+              <input type="number" class="form-control" id="form-tx-amount" min="1" step="any" placeholder="e.g. 500" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-tx-date">Date *</label>
+              <input type="date" class="form-control" id="form-tx-date" required>
+            </div>
+          </div>
+
+          <!-- Category & Subcategory Row (For Expense, Recharge, Investment, Donate) -->
+          <div class="form-row" id="row-category-subcategory">
+            <div class="form-group">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label class="form-label" for="form-tx-category">Category *</label>
+                <button type="button" class="btn btn-sm btn-outline" id="btn-inline-add-category" style="padding: 1px 6px; font-size: 0.72rem;">+ New</button>
+              </div>
+              <select class="form-control" id="form-tx-category"></select>
+            </div>
+            <div class="form-group">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label class="form-label" for="form-tx-subcategory">Subcategory / Item</label>
+                <button type="button" class="btn btn-sm btn-outline" id="btn-inline-add-subcategory" style="padding: 1px 6px; font-size: 0.72rem;">+ New</button>
+              </div>
+              <select class="form-control" id="form-tx-subcategory"></select>
+            </div>
+          </div>
+
+          <!-- Person & Expected Date (For Given and Taken) -->
+          <div class="form-row" id="row-person-details" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" for="form-tx-person">Person Name *</label>
+              <input type="text" class="form-control" id="form-tx-person" placeholder="e.g. Rahul">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-tx-expected-date" id="label-expected-date">Expected Return Date</label>
+              <input type="date" class="form-control" id="form-tx-expected-date">
+            </div>
+          </div>
+
+          <!-- Reminder Frequency (For Given and Taken) -->
+          <div class="form-row" id="row-reminder-frequency" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" for="form-tx-reminder-freq">Reminder Frequency</label>
+              <select class="form-control" id="form-tx-reminder-freq">
+                <option value="DAILY">Every day</option>
+                <option value="2_DAYS">Every 2 days</option>
+                <option value="3_DAYS">Every 3 days</option>
+                <option value="WEEKLY">Every week</option>
+                <option value="CUSTOM">Custom days...</option>
+              </select>
+            </div>
+            <div class="form-group" id="group-custom-reminder-days" style="display: none;">
+              <label class="form-label" for="form-tx-reminder-days">Interval (Days)</label>
+              <input type="number" class="form-control" id="form-tx-reminder-days" min="1" max="90" value="5">
+            </div>
+          </div>
+
+          <!-- Income Specific Option -->
+          <div class="form-group" id="group-income-default" style="display: none;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
+              <input type="checkbox" id="form-tx-set-default-allowance" checked>
+              <span>Use this amount as default monthly allowance for future months</span>
+            </label>
+          </div>
+
+          <!-- Description / Reason / Note -->
+          <div class="form-group">
+            <label class="form-label" for="form-tx-desc" id="label-tx-desc">Description / Note</label>
+            <input type="text" class="form-control" id="form-tx-desc" placeholder="e.g. Swiggy dinner / Room Rent / College bill">
+          </div>
+
+          <!-- Form Action Buttons -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="btn-cancel-tx">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-tx">Save Entry</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT ALLOWANCE MODAL -->
+  <div class="modal-overlay" id="modal-allowance">
+    <div class="modal-dialog" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3>💰 Monthly Allowance</h3>
+        <button class="modal-close-btn" id="btn-close-allowance-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-modal-allowance">
+          <div class="form-group">
+            <label class="form-label">Allowance for <span id="modal-allowance-month-name">September 2026</span> (₹)</label>
+            <input type="number" class="form-control" id="modal-input-allowance" min="1" step="any" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date Received</label>
+            <input type="date" class="form-control" id="modal-input-allowance-date" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Note</label>
+            <input type="text" class="form-control" id="modal-input-allowance-note" placeholder="e.g. UPI from Papa">
+          </div>
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
+              <input type="checkbox" id="modal-input-allowance-default" checked>
+              <span>Automatically use this amount for future months</span>
+            </label>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="btn-cancel-allowance">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Allowance</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATION & PROFILE MODAL (LOGIN / SIGN UP / RESET) -->
+  <div class="modal-overlay" id="modal-auth">
+    <div class="modal-dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 id="modal-auth-title">Account & Access</h3>
+        <button class="modal-close-btn" id="btn-close-auth-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Active User Status (if logged in) -->
+        <div id="auth-logged-in-box" style="display: none; background: var(--bg-surface-elevated); padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px; text-align: center;">
+          <div class="user-avatar" id="auth-current-avatar" style="width: 54px; height: 54px; font-size: 1.4rem; margin: 0 auto 10px auto;">R</div>
+          <h4 id="auth-current-name" style="font-size: 1.1rem; margin-bottom: 2px;">Rajbir</h4>
+          <p id="auth-current-email" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">student@pgsahara.com</p>
+          <span class="pill-badge pill-success" id="auth-current-pg">PG Sahara #204</span>
+          <div style="margin-top: 16px; display: flex; gap: 10px; justify-content: center;">
+            <button class="btn btn-sm btn-outline text-danger" id="btn-auth-logout">🚪 Log Out</button>
+            <button class="btn btn-sm btn-outline" id="btn-auth-switch-account">Switch Account</button>
+          </div>
+        </div>
+
+        <!-- Auth Tabs (Login / Sign Up / Reset) -->
+        <div class="auth-tabs" id="auth-tabs-bar">
+          <button class="auth-tab-btn active" data-auth-tab="login" id="tab-btn-login">
+            <span>🔐 Login</span>
+          </button>
+          <button class="auth-tab-btn" data-auth-tab="signup" id="tab-btn-signup">
+            <span>📝 Sign Up</span>
+          </button>
+          <button class="auth-tab-btn" data-auth-tab="reset" id="tab-btn-reset">
+            <span>🔄 Reset Password</span>
+          </button>
+        </div>
+
+        <!-- 1. LOGIN FORM -->
+        <form id="form-login" class="auth-form-view">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input type="email" class="form-control" id="login-email" placeholder="e.g. student@pgsahara.com" value="student@pgsahara.com" required>
+          </div>
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label class="form-label" for="login-password">Password</label>
+              <a href="#" id="link-goto-reset" style="font-size: 0.78rem; font-weight: 600;">Forgot / Reset?</a>
+            </div>
+            <div class="password-input-wrapper">
+              <input type="password" class="form-control" id="login-password" placeholder="Enter password" value="sahara123" required>
+              <button type="button" class="password-toggle-btn" data-target="login-password" title="Show/Hide">👁️</button>
+            </div>
+          </div>
+          <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; cursor: pointer;">
+              <input type="checkbox" id="login-remember-me" checked>
+              <span>Keep me signed in</span>
+            </label>
+            <button type="button" class="btn btn-sm btn-outline" id="btn-fill-demo-creds" style="font-size: 0.75rem; padding: 2px 8px;">
+              ⚡ Demo Creds
+            </button>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+        </form>
+
+        <!-- 2. SIGN UP FORM -->
+        <form id="form-signup" class="auth-form-view" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="signup-name">Full Name *</label>
+            <input type="text" class="form-control" id="signup-name" placeholder="e.g. Rahul Sharma" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="signup-pg">PG / Hostel Name</label>
+              <input type="text" class="form-control" id="signup-pg" placeholder="e.g. PG Sahara #301">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="signup-college">College / University</label>
+              <input type="text" class="form-control" id="signup-college" placeholder="e.g. IIT / NIT / DU">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signup-email">Email Address *</label>
+            <input type="email" class="form-control" id="signup-email" placeholder="e.g. rahul@gmail.com" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="signup-password">Password *</label>
+              <div class="password-input-wrapper">
+                <input type="password" class="form-control" id="signup-password" minlength="6" placeholder="Min 6 characters" required>
+                <button type="button" class="password-toggle-btn" data-target="signup-password">👁️</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="signup-password-confirm">Confirm Password *</label>
+              <div class="password-input-wrapper">
+                <input type="password" class="form-control" id="signup-password-confirm" minlength="6" placeholder="Re-enter password" required>
+                <button type="button" class="password-toggle-btn" data-target="signup-password-confirm">👁️</button>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">Create Account</button>
+        </form>
+
+        <!-- 3. RESET PASSWORD FORM WITH RESEND OPTION -->
+        <form id="form-reset" class="auth-form-view" style="display: none;">
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Enter your account email to receive a verification reset code. You can resend the code at any time.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="reset-email">Account Email</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="email" class="form-control" id="reset-email" placeholder="e.g. student@pgsahara.com" value="student@pgsahara.com" required>
+              <button type="button" class="btn btn-outline" id="btn-request-reset-code" style="white-space: nowrap;">Send Code</button>
+            </div>
+          </div>
+
+          <!-- Step 2: Code Verification & Resend Box -->
+          <div id="reset-step-two" style="display: none;">
+            <div class="resend-code-wrapper">
+              <div class="resend-info">
+                <span>Code sent! Didn't receive it?</span>
+              </div>
+              <button type="button" class="btn-resend" id="btn-resend-code">
+                🔄 Resend Code <span id="resend-timer-label"></span>
+              </button>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reset-code">6-Digit Verification Code</label>
+              <input type="text" class="form-control" id="reset-code" maxlength="6" placeholder="Enter 6-digit code" style="letter-spacing: 4px; font-size: 1.1rem; font-weight: 700; text-align: center;">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="reset-new-password">New Password</label>
+                <div class="password-input-wrapper">
+                  <input type="password" class="form-control" id="reset-new-password" minlength="6" placeholder="New password">
+                  <button type="button" class="password-toggle-btn" data-target="reset-new-password">👁️</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="reset-confirm-password">Confirm Password</label>
+                <div class="password-input-wrapper">
+                  <input type="password" class="form-control" id="reset-confirm-password" minlength="6" placeholder="Confirm password">
+                  <button type="button" class="password-toggle-btn" data-target="reset-confirm-password">👁️</button>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">Reset Password & Sign In</button>
+          </div>
+
+          <div style="margin-top: 16px; text-align: center;">
+            <a href="#" id="link-back-to-login" style="font-size: 0.82rem; font-weight: 600;">← Back to Sign In</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESET DATA CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="modal-reset-data">
+    <div class="modal-dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 style="color: var(--color-spending);">🧹 Reset Financial Data</h3>
+        <button class="modal-close-btn" id="btn-close-reset-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+          Choose how you would like to reset your prices, spending, and savings:
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+          <label style="display: flex; gap: 12px; padding: 14px; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+            <input type="radio" name="reset-scope-choice" value="ALL_ZERO" checked style="margin-top: 3px;">
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Reset All Data to ₹0 (Clean Slate)</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Clears all transactions, room rent, recharges, investments, and resets spending & savings to ₹0 across all months.
+              </div>
+            </div>
+          </label>
+
+          <label style="display: flex; gap: 12px; padding: 14px; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+            <input type="radio" name="reset-scope-choice" value="MONTH_ZERO" style="margin-top: 3px;">
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Zero Out Selected Month (<span id="modal-reset-month-label">September 2026</span>) Only</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Clears expenses, rent, and resets spending/savings to ₹0 for this month only.
+              </div>
+            </div>
+          </label>
+
+          <label style="display: flex; gap: 12px; padding: 14px; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+            <input type="radio" name="reset-scope-choice" value="SAVINGS_ZERO" style="margin-top: 3px;">
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-saving);">Reset Pocket Savings to ₹0 for this Month</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Sets remaining savings to ₹0 (useful when remaining money has been moved to piggybank/bank).
+              </div>
+            </div>
+          </label>
+
+          <label style="display: flex; gap: 12px; padding: 14px; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+            <input type="radio" name="reset-scope-choice" value="RESTORE_DEMO" style="margin-top: 3px;">
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Restore Initial Demo Data</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Restores the sample ₹10,000 allowance, room rent, food, and pending loan records.
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <div class="form-group" id="group-reset-allowance">
+          <label class="form-label" for="input-reset-initial-allowance">Starting Monthly Allowance (₹)</label>
+          <input type="number" class="form-control" id="input-reset-initial-allowance" min="0" value="0" placeholder="0 for completely blank, or your monthly allowance">
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Leave 0 to start with 0 prices and 0 savings, or enter your allowance.</span>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" id="btn-cancel-reset-modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="btn-confirm-reset-action" style="background: var(--color-spending); border-color: var(--color-spending);">
+            Confirm & Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Vendor Script: Local Chart.js for 100% offline capability -->
+  <script src="vendor/chart.umd.min.js"></script>
+
+  <!-- Application Logic Modules -->
+  <script src="js/auth.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/calculations.js"></script>
+  <script src="js/categories.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
